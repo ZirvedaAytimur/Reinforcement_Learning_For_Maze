@@ -1,39 +1,19 @@
-import setup_path 
-import airsim
+import gym
+import airgym
 
-import numpy as np
-import os
-import tempfile
-import pprint
-import cv2
+env = gym.make('airgym:airsim-drone-sample-v0',ip_address='127.0.0.1',step_length=0.25, image_shape=(608,608,3))
 
-# connect to the AirSim simulator
-client = airsim.MultirotorClient()
-client.confirmConnection()
-client.enableApiControl(True)
-client.armDisarm(True)
-
-state = client.getMultirotorState()
-s = pprint.pformat(state)
-print("state: %s" % s)
-
-imu_data = client.getImuData()
-s = pprint.pformat(imu_data)
-print("imu_data: %s" % s)
-
-barometer_data = client.getBarometerData()
-s = pprint.pformat(barometer_data)
-print("barometer_data: %s" % s)
-
-magnetometer_data = client.getMagnetometerData()
-s = pprint.pformat(magnetometer_data)
-print("magnetometer_data: %s" % s)
-
-gps_data = client.getGpsData()
-s = pprint.pformat(gps_data)
-print("gps_data: %s" % s)
-
-airsim.wait_key('Press any key to reset to original state')
-
-client.armDisarm(False)
-client.reset()
+episodes = 10
+steps = 20
+episode_rewards = []
+for ep in range(episodes):
+    ep_reward = 0
+    print("Episode {}".format(ep))
+    for s in range(steps):
+        act = env.action_space.sample()
+        obs, reward, done, state = env.step(act)
+        ep_reward += reward
+        if done:
+            break
+    episode_rewards.append(ep_reward)
+    env.reset()
