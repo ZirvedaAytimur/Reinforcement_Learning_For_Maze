@@ -11,6 +11,8 @@ from airgym.envs.airsim_env import AirSimEnv
 
 
 class AirSimDroneEnv(AirSimEnv):
+    stepNumber = 0
+
     def __init__(self, ip_address, step_length, image_shape):
         super().__init__(image_shape)
         self.step_length = step_length
@@ -39,8 +41,8 @@ class AirSimDroneEnv(AirSimEnv):
         self.drone.armDisarm(True)
 
         # Set home position and velocity
-        self.drone.moveToPositionAsync(-0.55265, -31.9786, -19.0225, 10).join()
-        self.drone.moveByVelocityAsync(1, -0.67, -0.8, 5).join()
+        self.drone.moveToPositionAsync(-10, 10, -10, 10).join()
+        # self.drone.moveByVelocityAsync(1, -0.67, -0.8, 5).join()
 
     def transform_obs(self, responses):
         img1d = np.array(responses[0].image_data_float, dtype=np.float)
@@ -79,17 +81,40 @@ class AirSimDroneEnv(AirSimEnv):
         ).join()
 
     def _compute_reward(self):
-        thresh_dist = 7
-        beta = 1
-
-        z = -10
-        pts = [
-            np.array([-0.55265, -31.9786, -19.0225]),
-            np.array([48.59735, -63.3286, -60.07256]),
-            np.array([193.5974, -55.0786, -46.32256]),
-            np.array([369.2474, 35.32137, -62.5725]),
-            np.array([541.3474, 143.6714, -32.07256]),
-        ]
+        quad_pt = np.array(
+            list(
+                (
+                    self.state["position"].x_val,
+                    self.state["position"].y_val,
+                    self.state["position"].z_val,
+                )
+            )
+        )
+        goal = np.array(list((-30, 30, -30)))
+        
+        if np.array_equal(goal, quad_pt):
+            done = 1
+            reward = 100
+            return reward, done
+        else:
+            done = 0
+        
+        distance = abs(math.sqrt(math.pow(quad_pt[0] - goal[0], 2) + math.pow(quad_pt[1] - goal[1], 2) + math.pow(quad_pt[2] - goal[2], 2)* 1.0))
+        
+        if distance > 30:
+            reward = -20
+        else:
+            reward = (30 - distance) * 0.1
+    
+    """
+        xCoordinate = -(10 + (AirSimDroneEnv.stepNumber * self.step_length))
+        yCoordinate = 10 + (AirSimDroneEnv.stepNumber * self.step_length)
+        zCoordinate = -(5 + (AirSimDroneEnv.stepNumber * self.step_length))
+        goal = np.array(list((xCoordinate, yCoordinate, zCoordinate)))
+        
+        print("XCoordinate: ", xCoordinate)
+        print("YCoordinate: ", yCoordinate)
+        print("ZCoordinate: ", zCoordinate)
 
         quad_pt = np.array(
             list(
@@ -100,40 +125,36 @@ class AirSimDroneEnv(AirSimEnv):
                 )
             )
         )
+        
+        print("quad_pt X: ", quad_pt[0])
+        print("quad_pt Y: ", quad_pt[1])
+        print("quad_pt Z: ", quad_pt[2])
+        
+        distance = abs(math.sqrt(math.pow(quad_pt[0] - goal[0], 2) + math.pow(quad_pt[1] - goal[1], 2) + math.pow(quad_pt[2] - goal[2], 2)* 1.0))
+        
+        print("Distance: ", distance)
 
-        if self.state["collision"]:
-            reward = -100
+        if distance == 0:
+            reward = 100
+        elif distance <= 10:
+            reward = 20
+        elif distance <= 20:
+            reward = -distance
         else:
-            dist = 10000000
-            for i in range(0, len(pts) - 1):
-                dist = min(
-                    dist,
-                    np.linalg.norm(np.cross((quad_pt - pts[i]), (quad_pt - pts[i + 1])))
-                    / np.linalg.norm(pts[i] - pts[i + 1]),
-                )
-
-            if dist > thresh_dist:
-                reward = -10
-            else:
-                reward_dist = math.exp(-beta * dist) - 0.5
-                reward_speed = (
-                    np.linalg.norm(
-                        [
-                            self.state["velocity"].x_val,
-                            self.state["velocity"].y_val,
-                            self.state["velocity"].z_val,
-                        ]
-                    )
-                    - 0.5
-                )
-                reward = reward_dist + reward_speed
+            reward = -100
+        
+        AirSimDroneEnv.stepNumber += 1
 
         done = 0
-        if reward <= -10:
+        if (np.array_equal(goal, quad_pt)):
             done = 1
+            AirSimDroneEnv.stepNumber = 0
+        
+        elif (AirSimDroneEnv.stepNumber >= 20):
+            AirSimDroneEnv.stepNumber = 0
 
         return reward, done
-
+"""
     def step(self, action):
         self._do_action(action)
         obs = self._get_obs()
