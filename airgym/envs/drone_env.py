@@ -94,7 +94,7 @@ class AirSimDroneEnv(AirSimEnv):
         
         if np.array_equal(goal, quad_pt):
             done = 1
-            reward = 100
+            reward = 30
             return reward, done
         else:
             done = 0
@@ -105,6 +105,8 @@ class AirSimDroneEnv(AirSimEnv):
             reward = -20
         else:
             reward = (30 - distance) * 0.1
+        
+        return reward, done
     
     """
         xCoordinate = -(10 + (AirSimDroneEnv.stepNumber * self.step_length))
