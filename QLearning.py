@@ -18,6 +18,8 @@ maze = [[0, -1, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, -1],
         [-1, 0, 0, 0, 0, 0],
         [-1, -1, -1, 0, 0, 1]]
+# shortest iteration number to calculate mse
+shortest_iteration = 10
 
 # parameters to create maze
 n = 6  # number of side squares
@@ -43,7 +45,7 @@ Q = np.zeros((n ** 2, 4))  # number of states and 4 actions
 actions = {"up": 0, "down": 1, "left": 2, "right": 3}  # all actions
 alpha = 0.1  # learning rate
 gamma = 0.9  # discount factor
-epsilon = 0.50   # choose exploit or explore value
+epsilon = 0.50  # choose exploit or explore value
 min_epsilon = 0.05  # min epsilon value
 current_position = [0, 0]
 
@@ -67,7 +69,7 @@ def select_an_action(current_state):
         if current_position[0] != 0:
             possible_actions.append(Q[current_state, 0])
         else:
-            possible_actions.append(m - 10)
+            possible_actions.append(m - 100)
         if current_position[0] != n - 1:
             possible_actions.append(Q[current_state, 1])
         else:
@@ -102,6 +104,17 @@ def layout():
                                30, 0)
 
 
+def calculate_mse(iterations_list):
+    # calculating mean squared error
+    min_iteration_number = shortest_iteration
+    total = 0
+    for i in range(len(iterations)):
+        total += (iterations_list[i] - min_iteration_number) ** 2
+    mean_square_error = total / len(iterations)
+
+    return mean_square_error
+
+
 # main method
 background = (160, 160, 160)  # reset the screen
 run = True  # is program running
@@ -110,6 +123,7 @@ cumulative_reward = 0  # cumulative reward for one episode
 iterations = []  # number of iterations for all episodes
 iteration = 0  # iteration for one episode
 episodes = []  # all episodes
+mean_squared_errors = []
 episode_number = 0
 while run:
     sleep(0.01)
@@ -146,8 +160,8 @@ while run:
     new_state = states[(current_position[0], current_position[1])]
     if new_state not in obstacles:
         Q[current_state, action] += alpha * (
-                    reward[current_position[0], current_position[1]] + gamma * (np.max(Q[new_state])) - Q[
-                current_state, action])
+                reward[current_position[0], current_position[1]] + gamma * (np.max(Q[new_state])) - Q[
+            current_state, action])
     else:
         Q[current_state, action] += alpha * reward[current_position[0], current_position[1]] - Q[current_state, action]
         current_position = [0, 0]
@@ -157,11 +171,21 @@ while run:
 
     # if agent reached the goal reset
     if current_position == [n - 1, n - 1]:
+        # print episode result
         print(f"Episode {episode_number}: final score is {cumulative_reward} with {iteration} iterations")
-        current_position = [0, 0]
+
+        # add results for plot
         iterations.append(iteration)
         cumulative_rewards.append(cumulative_reward)
         episodes.append(episode_number)
+
+        # calculate mean squared error
+        mse = calculate_mse(iterations)
+        mean_squared_errors.append(mse)
+        print(f"The mean squared error for first {episode_number} episode is: {mse}")
+
+        # reset
+        current_position = [0, 0]
         iteration = 0
         cumulative_reward = 0
         episode_number += 1
@@ -183,5 +207,11 @@ plt.plot(episodes, iterations, color="blue")
 plt.title("The number of iterations in one episode")
 plt.xlabel("Episode Number")
 plt.ylabel("Iteration Number")
+
+plt.subplot(2, 2, 3)
+plt.plot(episodes, mean_squared_errors, color="green")
+plt.title("The mean squared error changes")
+plt.xlabel("Episode Number")
+plt.ylabel("MSE")
 
 plt.show()
