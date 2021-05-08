@@ -84,25 +84,6 @@ while run:
 
 pygame.quit()
 
-# plot
-plt.figure(figsize=(12, 6))
 
-plt.subplot(2, 2, 1)
-plt.plot(episodes, cumulative_rewards, color="red")
-plt.title("Cumulative reward for one episode")
-plt.xlabel("Episode Number")
-plt.ylabel("Cumulative reward")
-
-plt.subplot(2, 2, 2)
-plt.plot(episodes, iterations, color="blue")
-plt.title("The number of iterations in one episode")
-plt.xlabel("Episode Number")
-plt.ylabel("Iteration Number")
-
-plt.subplot(2, 2, 3)
-plt.plot(episodes, mean_squared_errors, color="green")
-plt.title("The mean squared error changes")
-plt.xlabel("Episode Number")
-plt.ylabel("MSE")
-
-plt.show()
+def return_randomaction_solution():
+    return episodes, cumulative_rewards, iterations, mean_squared_errors
