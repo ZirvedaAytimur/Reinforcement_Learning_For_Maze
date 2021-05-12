@@ -20,6 +20,8 @@ plt.plot(ql_episodes, ra_cumulative_rewards, color="green")
 plt.title("Cumulative reward for one episode")
 plt.xlabel("Episode Number")
 plt.ylabel("Cumulative reward")
+plt.ylim(-400, 20)
+plt.legend(["QLearning", "SARSA", "Random"], bbox_to_anchor=(1.05, 1), loc='upper right')
 
 plt.subplot(2, 2, 2)
 # multiple line plots
@@ -29,6 +31,8 @@ plt.plot(ql_episodes, ra_iterations, color="green")
 plt.title("The number of iterations in one episode")
 plt.xlabel("Episode Number")
 plt.ylabel("Iteration Number")
+plt.ylim(0, 1500)
+plt.legend(["QLearning", "SARSA", "Random"], bbox_to_anchor=(1.05, 1), loc='lower right')
 
 plt.subplot(2, 2, 3)
 # multiple line plots
