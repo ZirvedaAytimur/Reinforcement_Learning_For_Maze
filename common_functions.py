@@ -1,7 +1,7 @@
 import numpy as np
 import pygame
 
-n = 6  # number of side squares
+n = 8  # number of side squares
 
 
 def create_maze():
@@ -12,16 +12,18 @@ def create_maze():
      - -1 means not traversable
      - 1 means goal
     """
-    maze = [[0, -1, 0, 0, 0, 0],
-            [0, 0, -1, 0, -1, 0],
-            [0, 0, 0, -1, 0, 0],
-            [0, 0, 0, 0, 0, -1],
-            [-1, 0, 0, 0, 0, 0],
-            [-1, -1, -1, 0, 0, 1]]
+    maze = [[-4, -4, -4, -4, -4, -4, -4, -4],
+            [-4, 0, 0, -1, 0, 0, 0, -4],
+            [-4, 0, 0, 0, 0, 0, 0, -4],
+            [-4, 0, 0, -1, 0, 0, 0, -4],
+            [-4, -1, -1, -1, -1, 0, 0, -4],
+            [-4, 0, 0, 0, 0, 0, 0, -4],
+            [-4, 0, -1, 0, 0, -1, 0, -4],
+            [-4, -4, -4, 10, 10, -4, -4, -4]]
     # shortest iteration number to calculate mse
 
     # parameters to create maze
-    display_maze = [(160, 160, 160) for i in range(n ** 2)]  # displaying background color
+    display_maze = [(246, 201, 210) for i in range(n ** 2)]  # displaying background color
     reward = np.zeros((n, n))
     obstacles = []  # obstacles in the screen
     states = {}  # all states
@@ -32,11 +34,15 @@ def create_maze():
             k += 1
             if maze[i][j] == -1:
                 reward[i, j] = -1
-                display_maze[n * i + j] = (255, 163, 255)
+                display_maze[n * i + j] = (252, 80, 103)
                 obstacles.append(n * i + j)
-            elif maze[i][j] == 1:
-                reward[i, j] = 10
-                display_maze[n ** 2 - 1] = (153, 255, 153)
+            elif maze[i][j] == -4:
+                reward[i, j] = -4
+                display_maze[n * i + j] = (198, 13, 13)
+                obstacles.append(n * i + j)
+            elif maze[i][j] == 10:
+                reward[i][j] = 10
+                display_maze[n * i + j] = (8, 124, 8)
 
     return n, display_maze, reward, obstacles, states
 
@@ -82,7 +88,7 @@ def calculate_mse(iterations_list):
 
 
 def is_done(current_position):
-    if current_position == [n - 1, n - 1]:
+    if current_position == [n - 1, 3] or current_position == [n - 1, 4]:
         return True
 
 
@@ -108,7 +114,7 @@ def move(action, current_position):
 
 
 def epsilon_greedy(epsilon):
-    min_epsilon = 0.05  # min epsilon value
+    min_epsilon = 0.1  # min epsilon value
     if epsilon > min_epsilon:
         # increase probability of exploring every step
         epsilon -= 3e-4

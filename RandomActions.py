@@ -1,14 +1,13 @@
 import pygame
 from time import sleep
 from random import randint as r
-import matplotlib.pyplot as plt
 
 from common_functions import create_maze, act_random, layout, calculate_mse, is_done, is_user_exit, move
 
 n, display_maze, reward, obstacles, states = create_maze()
 
 actions = {"up": 0, "down": 1, "left": 2, "right": 3}  # all actions
-current_position = [0, 0]
+current_position = [1, 1]
 
 
 # method to choose an action
@@ -25,7 +24,7 @@ screen_y = n * 100
 screen = pygame.display.set_mode((screen_x, screen_y))
 
 # main method
-background = (160, 160, 160)  # reset the screen
+background = (240, 228, 246)  # reset the screen
 run = True  # is program running
 cumulative_rewards = []  # cumulative rewards for all episodes
 cumulative_reward = 0  # cumulative reward for one episode
@@ -59,7 +58,7 @@ while run:
 
     new_state = states[(current_position[0], current_position[1])]
     if new_state in obstacles:
-        current_position = [0, 0]
+        current_position = [1, 1]
 
     # if agent reached the goal reset
     if done:
@@ -77,7 +76,7 @@ while run:
         print(f"The mean squared error for first {episode_number} episode is: {mse}")
 
         # reset
-        current_position = [0, 0]
+        current_position = [1, 1]
         iteration = 0
         cumulative_reward = 0
         episode_number += 1
