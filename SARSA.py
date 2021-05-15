@@ -47,8 +47,8 @@ def select_an_action(current_state):
 
 
 # screen parameters
-screen_x = n * 100
-screen_y = n * 100
+screen_x = n * 70
+screen_y = n * 70
 screen = pygame.display.set_mode((screen_x, screen_y))
 
 # main method

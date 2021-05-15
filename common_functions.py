@@ -12,15 +12,36 @@ def create_maze():
      - -1 means not traversable
      - 1 means goal
     """
-    maze = [[-4, -4, -4, -4, -4, -4, -4, -4],
-            [-4, 0, 0, -1, 0, 0, 0, -4],
-            [-4, 0, 0, 0, 0, 0, 0, -4],
-            [-4, 0, 0, -1, 0, 0, 0, -4],
-            [-4, -1, -1, -1, -1, 0, 0, -4],
-            [-4, 0, 0, 0, 0, 0, 0, -4],
-            [-4, 0, -1, 0, 0, -1, 0, -4],
-            [-4, -4, -4, 10, 10, -4, -4, -4]]
-    # shortest iteration number to calculate mse
+    print("Enter 1 or 2 to choose a maze.")
+    maze_number = int(input())
+
+    while maze_number != 1 and maze_number != 2:
+        print("Enter 1 or 2 to choose a maze.")
+        maze_number = int(input())
+
+    if maze_number == 1:
+        maze = [[-4, -4, -4, -4, -4, -4, -4, -4],
+                [-4, 0, 0, -1, 0, 0, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, -4],
+                [-4, 0, 0, -1, 0, 0, 0, -4],
+                [-4, -1, -1, -1, -1, 0, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, -4],
+                [-4, 0, -1, 0, 0, -1, 0, -4],
+                [-4, -4, -4, 10, 10, -4, -4, -4]]
+    else:
+        global n
+        n = 10
+        maze = [[-4, -4, -4, -4, -4, -4, -4, -4, -4, -4],
+                [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
+                [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, 0, 0, -4],
+                [-4, -1, -1, -1, -1, -1, 0, -1, -1, -4],
+                [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, 0, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, -1, -1, -4],
+                [10, 0, 0, 0, -1, 0, 0, 0, 0, -4],
+                [-4, -4, -4, -4, -4, -4, -4, -4, -4, -4]]
+    print(maze)
 
     # parameters to create maze
     display_maze = [(246, 201, 210) for i in range(n ** 2)]  # displaying background color
@@ -64,13 +85,13 @@ def act_random(current_position, possible_actions, actions, r):
 # put maze items on screen
 def layout(screen_x, screen_y, screen, display_maze, current_position):
     c = 0
-    for i in range(0, screen_x, 100):
-        for j in range(0, screen_y, 100):
+    for i in range(0, screen_x, 70):
+        for j in range(0, screen_y, 70):
             pygame.draw.rect(screen, (255, 255, 255), (j, i, j + 100, i + 100), 0)
             pygame.draw.rect(screen, display_maze[c], (j + 3, i + 3, j + 95, i + 95), 0)
             c += 1
-            pygame.draw.circle(screen, (25, 129, 230), (current_position[1] * 100 + 50, current_position[0] * 100 + 50),
-                               30, 0)
+            pygame.draw.circle(screen, (25, 129, 230), (current_position[1] * 70 + 35, current_position[0] * 70 + 35),
+                               25, 0)
 
 
 shortest_iteration = 10
