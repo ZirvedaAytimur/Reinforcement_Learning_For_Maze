@@ -14,7 +14,6 @@ actions = {"up": 0, "down": 1, "left": 2, "right": 3}  # all actions
 alpha = 0.1  # learning rate
 gamma = 0.9  # discount factor
 epsilon = 0.50  # choose exploit or explore value
-min_epsilon = 0.05  # min epsilon value
 current_position = [1, 1]
 
 
@@ -101,7 +100,8 @@ while run:
         current_position = [1, 1]
         current_state = states[(current_position[0], current_position[1])]
         action = select_an_action(current_state)
-        epsilon = epsilon_greedy(epsilon)
+
+    epsilon = epsilon_greedy(epsilon)
 
     # if agent reached the goal reset
     if done:

@@ -91,7 +91,8 @@ while run:
     else:
         Q[current_state, action] += alpha * reward[current_position[0], current_position[1]] - Q[current_state, action]
         current_position = [1, 1]
-        epsilon = epsilon_greedy(epsilon)
+
+    epsilon = epsilon_greedy(epsilon)
 
     # if agent reached the goal reset
     if done:

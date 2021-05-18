@@ -2,9 +2,10 @@ import numpy as np
 import pygame
 
 n = 8  # number of side squares
-
+maze_number = 1
 
 def create_maze():
+    global maze_number
     # Maze
     """
     - States
@@ -33,14 +34,14 @@ def create_maze():
         n = 10
         maze = [[-4, -4, -4, -4, -4, -4, -4, -4, -4, -4],
                 [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
-                [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
-                [-4, 0, 0, 0, 0, 0, 0, 0, 0, -4],
+                [-4, 0, 0, 0, -1, 0, -1, -1, 0, -4],
+                [-4, 0, 0, 0, 0, 0, 0, -1, 0, -4],
                 [-4, -1, -1, -1, -1, -1, 0, -1, -1, -4],
                 [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
                 [-4, 0, 0, 0, 0, 0, 0, 0, 0, -4],
-                [-4, 0, 0, 0, 0, 0, 0, -1, -1, -4],
-                [10, 0, 0, 0, -1, 0, 0, 0, 0, -4],
-                [-4, -4, -4, -4, -4, -4, -4, -4, -4, -4]]
+                [-4, 0, -1, -1, -1, 0, 0, -1, -1, -4],
+                [-4, 0, 0, 0, -1, 0, 0, 0, 0, -4],
+                [-4, -4, -4, 10, -4, -4, -4, -4, -4, -4]]
     print(maze)
 
     # parameters to create maze
@@ -94,11 +95,12 @@ def layout(screen_x, screen_y, screen, display_maze, current_position):
                                25, 0)
 
 
-shortest_iteration = 10
-
 
 def calculate_mse(iterations_list):
+    shortest_iteration = 10
     # calculating mean squared error
+    if maze_number == 2:
+        shortest_iteration = 20
     min_iteration_number = shortest_iteration
     total = 0
     for i in range(len(iterations_list)):
@@ -109,8 +111,14 @@ def calculate_mse(iterations_list):
 
 
 def is_done(current_position):
-    if current_position == [n - 1, 3] or current_position == [n - 1, 4]:
-        return True
+    if maze_number == 1:
+        if current_position == [n - 1, 3] or current_position == [n - 1, 4]:
+            return True
+        return False
+    elif maze_number == 2:
+        if current_position == [n - 1, 3]:
+            return True
+        return False
 
 
 def is_user_exit(run):
@@ -135,9 +143,9 @@ def move(action, current_position):
 
 
 def epsilon_greedy(epsilon):
-    min_epsilon = 0.1  # min epsilon value
+    min_epsilon = 0.10  # min epsilon value
     if epsilon > min_epsilon:
         # increase probability of exploring every step
-        epsilon -= 3e-4
+        epsilon -= 0.9
 
     return epsilon
