@@ -40,6 +40,27 @@ while run:
 
     done = is_done(current_position)
 
+    # if agent reached the goal reset
+    if done or iteration == 20000:
+        # print episode result
+        print(f"Episode {episode_number}: final score is {cumulative_reward} with {iteration} iterations")
+
+        # add results for plot
+        iterations.append(iteration)
+        cumulative_rewards.append(cumulative_reward)
+        episodes.append(episode_number)
+
+        # calculate mean squared error
+        mse = calculate_mse(iterations)
+        mean_squared_errors.append(mse)
+        print(f"The mean squared error for first {episode_number} episode is: {mse}")
+
+        # reset
+        current_position = [1, 1]
+        iteration = 0
+        cumulative_reward = 0
+        episode_number += 1
+
     run = is_user_exit(run)
     pygame.display.flip()
 
@@ -59,27 +80,6 @@ while run:
     new_state = states[(current_position[0], current_position[1])]
     if new_state in obstacles:
         current_position = [1, 1]
-
-    # if agent reached the goal reset
-    if done:
-        # print episode result
-        print(f"Episode {episode_number}: final score is {cumulative_reward} with {iteration} iterations")
-
-        # add results for plot
-        iterations.append(iteration)
-        cumulative_rewards.append(cumulative_reward)
-        episodes.append(episode_number)
-
-        # calculate mean squared error
-        mse = calculate_mse(iterations)
-        mean_squared_errors.append(mse)
-        print(f"The mean squared error for first {episode_number} episode is: {mse}")
-
-        # reset
-        current_position = [1, 1]
-        iteration = 0
-        cumulative_reward = 0
-        episode_number += 1
 
 pygame.quit()
 

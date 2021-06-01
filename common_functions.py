@@ -97,7 +97,7 @@ def layout(screen_x, screen_y, screen, display_maze, current_position):
 
 
 def calculate_mse(iterations_list):
-    shortest_iteration = 10
+    shortest_iteration = 11
     # calculating mean squared error
     if maze_number == 2:
         shortest_iteration = 20
