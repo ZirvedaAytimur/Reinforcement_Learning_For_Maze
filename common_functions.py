@@ -146,6 +146,6 @@ def epsilon_greedy(epsilon):
     min_epsilon = 0.10  # min epsilon value
     if epsilon > min_epsilon:
         # increase probability of exploring every step
-        epsilon -= 0.9
+        epsilon -= 0.1
 
     return epsilon

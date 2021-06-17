@@ -13,7 +13,7 @@ Q = np.zeros((n ** 2, 4))  # number of states and 4 actions
 actions = {"up": 0, "down": 1, "left": 2, "right": 3}  # all actions
 alpha = 0.1  # learning rate
 gamma = 0.9  # discount factor
-epsilon = 0.50  # choose exploit or explore value
+epsilon = 0.90  # choose exploit or explore value
 current_position = [1, 1]
 
 
